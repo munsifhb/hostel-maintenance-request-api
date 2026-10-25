@@ -11,70 +11,103 @@ export class MaintanancerequestService {
     
     
     
-         //   get All Hostels
+         //   get All maintenancerequest
     
-          async getMaintananceRequest() {
-            return this.prisma.maintanancerequest.findMany()
+          async getMaintananceRequest(userId : number) {
+            return this.prisma.maintenanceRequest.findMany({
+              where : {
+                userId,
+              }
+            })
           }
     
     
-          //   create hostel
+          //   create maintenancerequest
           
-          
-              async createMaintananceRequest(createMaintananceRequestDto : CreateMaintananceRequestDto) {
-                  return  this.prisma.maintanancerequest.create({
-                      data : {
-                          ...createMaintananceRequestDto
-                      }
-                  })
-              }
+async createMaintananceRequest(
+  createMaintananceRequestDto: CreateMaintananceRequestDto,
+  userId: number,
+  
+) {
+   const { hostelId, ...requestData } = createMaintananceRequestDto;
+  return this.prisma.maintenanceRequest.create({
+    data: {
+      ...requestData,
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+      hostel: {
+        connect: {
+          id: hostelId,
+        },
+      },
+    },
+  });
+}
     
     
-            //   update Hostel 
+ //   update mrequest
     
-            async editMaintananceRequest(id: number, updateMaintananceRequestDto : UpdateMaintananceRequestDto) {
-                try{
-                        const updateMaintananceRequest = await this.prisma.maintanancerequest.update({
-                            where : {
-                                id : id
-                            },
-                            data : updateMaintananceRequestDto
-                        })
-                
-                        return updateMaintananceRequest
-                    }catch (error) {
-                        if (error.code === 'P2025') {
-                            throw new NotFoundException(`Maintanace Request with id number${id} is not found`)
-                        }
-                
-                        throw error
-                    }
-    
-                    
-            }
+ 
+async editMaintananceRequest(
+  id: number,
+  updateMaintananceRequestDto: UpdateMaintananceRequestDto,
+  userId: number,
+) {
+  const mainRequest = await this.prisma.maintenanceRequest.findFirst({
+    where: {
+      id,
+      userId,
+    },
+  });
+
+  if (!mainRequest) {
+    throw new NotFoundException('Request not found');
+  }
+
+  const result = await this.prisma.maintenanceRequest.updateMany({
+    where: {
+      id,
+      userId,
+    },
+    data: updateMaintananceRequestDto,
+  });
+
+  if (result.count === 0) {
+    throw new NotFoundException('Request not found');
+  }
+
+  return this.prisma.maintenanceRequest.findFirst({
+    where: {
+      id,
+      userId,
+    },
+  });
+}
+
     
     
     
             // delete 
-          async deleteMaintananceRequest(id: number) {
-        try {
-          // Prisma deletes the record from PostgreSQL using the integer ID
-          const removeMaintananceRequest = await this.prisma.maintanancerequest.delete({
-            where: { id: id },
-          });
-    
-          // Returning a success message or the deleted record profile
-          return {
-            message: `User with ID ${id} successfully deleted`,
-            removeMaintananceRequest,
-          };
-        } catch (error) {
-          // Prisma throws code 'P2025' if the request doesn't exist in the database
-          if (error.code === 'P2025') {
-            throw new NotFoundException(`Maintanance Request with ID ${id} does not exist.`);
-          }
-          throw error;
-        }
-      }
+        
+async deleteMaintananceRequest(id: number, userId: number) {
+  const result = await this.prisma.maintenanceRequest.deleteMany({
+    where: {
+      id,
+      userId,
+    },
+  });
+
+  if (result.count === 0) {
+    throw new NotFoundException('Request not found');
+  }
+
+  return {
+    message: `Maintenance request with ID ${id} successfully deleted`,
+  };
+}
+
 
 }

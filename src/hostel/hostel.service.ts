@@ -23,9 +23,13 @@ export class HostelService {
       
           async createHostel(createHostelDto : CreateHostelDto) {
               return  this.prisma.hostel.create({
-                  data : {
-                      ...createHostelDto
-                  }
+                   data: {
+      name: createHostelDto.name,
+      location: createHostelDto.location,
+      roomNumbers: createHostelDto.roomNumbers,
+      contact: createHostelDto.contact,
+
+    },
               })
           }
 

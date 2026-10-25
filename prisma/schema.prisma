@@ -15,35 +15,41 @@ enum Role {
 }
 
 model User {
-  id              Int      @id @default(autoincrement())
-  name            String
-  username        String   @unique
-  password        String
-  role            Role     @default(USER)
-  createdAt       DateTime @default(now())
-  email           String   @unique
-  phone           String
+  id                   Int      @id @default(autoincrement())
+  name                 String
+  username             String   @unique
+  password             String
+  role                 Role     @default(USER)
+  createdAt            DateTime @default(now())
+  email                String   @unique
+  phone                String
+  maintenanceRequests  MaintenanceRequest[]
 }
 
 
 
 model Hostel {
-  id               Int            @id @default(autoincrement())
-  name             String
-  location         String
-  createdAt        DateTime       @default(now())
-  roomnumbers      String
-  contact          String
+  id                   Int            @id @default(autoincrement())
+  name                 String
+  location             String
+  createdAt            DateTime       @default(now())
+  roomNumbers          String
+  contact              String
+  maintenanceRequests  MaintenanceRequest[]
 }
 
 
-model Maintanancerequest {
+model MaintenanceRequest {
   id                       Int         @id @default(autoincrement())
   title                    String
   description              String
   category                 Category
   status                   Status      @default(Submitted)
   createdAt                DateTime    @default(now())
+  userId                   Int
+  hostelId                 Int
+  user                     User        @relation(fields: [userId], references: [id])
+  hostel                   Hostel      @relation(fields: [hostelId], references: [id])
 
 }
 
@@ -57,5 +63,5 @@ enum Category {
 enum Status {
   Submitted
   InProgress
-  Ressolved
+  Resolved
 }

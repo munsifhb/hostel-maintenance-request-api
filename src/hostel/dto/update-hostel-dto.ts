@@ -16,6 +16,10 @@ export class UpdateHostelDto {
 
     @IsString()
     @IsOptional()
-    roomnumbers?: string
+    roomNumbers?: string
+
+    @IsString()
+    @IsOptional()
+    contact?: string
 
 }

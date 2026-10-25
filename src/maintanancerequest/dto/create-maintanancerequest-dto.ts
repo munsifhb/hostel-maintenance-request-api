@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { IsEnum, IsInt, IsNotEmpty, IsString, Min } from "class-validator";
 import { Category } from 'generated/prisma/enums';
 
 
@@ -19,6 +19,9 @@ export class CreateMaintananceRequestDto {
     category : Category;
 
 
+   @IsInt()
+  @Min(1)
+  hostelId: number;
 
 
 }

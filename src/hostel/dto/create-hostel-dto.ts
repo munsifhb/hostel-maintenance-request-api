@@ -16,7 +16,7 @@ export class CreateHostelDto {
 
     @IsString()
     @IsNotEmpty()
-    roomnumbers : string;
+    roomNumbers : string;
 
     @IsString()
     @IsNotEmpty()
