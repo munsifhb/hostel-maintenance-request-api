@@ -8,6 +8,16 @@ export class MaintanancerequestService {
 
 
     constructor(private prisma : PrismaService ) {}
+
+
+
+    async getAllMaintananceRequest() {
+  return this.prisma.maintenanceRequest.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}
     
     
     
@@ -107,6 +117,31 @@ async deleteMaintananceRequest(id: number, userId: number) {
   return {
     message: `Maintenance request with ID ${id} successfully deleted`,
   };
+}
+
+
+async deleteAllUsersMaintananceRequest(id: number) {
+  try {
+    const deletedRequest =
+      await this.prisma.maintenanceRequest.delete({
+        where: {
+          id,
+        },
+      });
+
+    return {
+      message: `Maintenance request with ID ${id} successfully deleted`,
+      deletedRequest,
+    };
+  } catch (error) {
+    if (error.code === 'P2025') {
+      throw new NotFoundException(
+        `Maintenance request with ID ${id} does not exist`,
+      );
+    }
+
+    throw error;
+  }
 }
 
 
