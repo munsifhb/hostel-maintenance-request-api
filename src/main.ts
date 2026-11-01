@@ -6,19 +6,17 @@ import cookieParser = require('cookie-parser');
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-
-
-
   app.useGlobalPipes(
     new ValidationPipe({
-      transform : true,
-      whitelist : true,
-      forbidNonWhitelisted : true,
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
     }),
-    
-  )
-    app.use(cookieParser());
+  );
 
-  await app.listen(process.env.PORT ?? 3000);
+  app.use(cookieParser());
+
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
+
 bootstrap();
